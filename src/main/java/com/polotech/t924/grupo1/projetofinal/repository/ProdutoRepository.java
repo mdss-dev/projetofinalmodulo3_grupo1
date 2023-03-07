@@ -1,5 +1,6 @@
 package com.polotech.t924.grupo1.projetofinal.repository;
 
+import com.polotech.t924.grupo1.projetofinal.model.CategoriaProduto;
 import com.polotech.t924.grupo1.projetofinal.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
