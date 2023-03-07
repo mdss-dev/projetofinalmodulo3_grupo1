@@ -1,7 +1,7 @@
 package com.polotech.t924.grupo1.projetofinal.model;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
