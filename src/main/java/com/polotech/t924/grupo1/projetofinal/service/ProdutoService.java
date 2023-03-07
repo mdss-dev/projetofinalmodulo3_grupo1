@@ -1,6 +1,7 @@
 package com.polotech.t924.grupo1.projetofinal.service;
 
 
+import com.polotech.t924.grupo1.projetofinal.model.CategoriaProduto;
 import com.polotech.t924.grupo1.projetofinal.model.Produto;
 import com.polotech.t924.grupo1.projetofinal.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
