@@ -1,4 +1,13 @@
 package com.polotech.t924.grupo1.projetofinal.repository;
 
-public class ProdutoRepository {
+import com.polotech.t924.grupo1.projetofinal.model.Produto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ProdutoRepository  extends JpaRepository<Produto, Integer> {
+    List<Produto> findByCategoria(CategoriaProduto categoriaProduto);
+    List<Produto> findByNomeContainingIgnoreCase(String nome);
 }

@@ -1,22 +1,25 @@
 package com.polotech.t924.grupo1.projetofinal.model;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Produto {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     private String nome;
-    private String marca;
-    private Double preco;
-    private Double quantidade;
-    private LocalDateTime ultimoPedido;
+    private String descricao;
+    private BigDecimal preco;
+
+    @Enumerated(EnumType.STRING)
+    private CategoriaProduto categoria;
+
+    public void setCategoria(CategoriaProduto categoria){
+        this.categoria = categoria;
+    }
 
 }
