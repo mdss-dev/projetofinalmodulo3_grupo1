@@ -15,43 +15,43 @@ import java.util.List;
 public class ProdutoService {
     private final ProdutoRepository produtoRepository;
 
-public Produto create(Produto produto){
+    public Produto create(Produto produto){
     return produtoRepository.save(produto);
 }
 
-public Produto update(Produto produto){
+    public Produto update(Produto produto){
     produtoRepository.findById(produto.getId())
             .orElseThrow(() -> new IllegalArgumentException("Produto com Id: "+ produto.getId() +" não encontrado"));
     return produtoRepository.save(produto);
 }
 
-public List<Produto> categoria(String categoria){
+    public List<Produto> categoria(String categoria){
     CategoriaProduto categoriaProduto = CategoriaProduto.valueOf(categoria.toUpperCase());
     List<Produto> produtos = produtoRepository.findByCategoria(categoriaProduto);
     return produtos;
 }
 
-public Produto buscarPorId (int id){
+    public Produto buscarPorId (int id){
     return produtoRepository.findById(id).get();
 }
 
-public List<Produto> buscarPorNome(String nome) {
+    public List<Produto> buscarPorNome(String nome) {
     List<Produto> produtosEncontrados = produtoRepository.findByNomeContainingIgnoreCase(nome);
     if(produtosEncontrados.isEmpty()) {
-        Collections.emptyList();
-    }
+    Collections.emptyList();
+        }
     return produtosEncontrados;
-}
+    }
 
-public List<Produto> buscarTodos(){
+    public List<Produto> buscarTodos(){
     List<Produto> produtos = produtoRepository.findAll();
     return produtos;
-}
+    }
 
 
-public Produto delete(int id){
+    public Produto delete(int id){
     Produto produto = produtoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
     produtoRepository.delete(produto);
     return produto;
-}
+    }
 }
