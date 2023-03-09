@@ -7,3 +7,8 @@
 * feature/model- Daphne/Michael
 * feature/repository- Michael
 * feature/templates- Daphne/Gabriel
+* ## Na refatoração, como as mudanças foram feitas em aula com o auxílio do professor e com modificações em todo o projeto, tendo em vista o prazo acirrado, 
+* ## subimos como git add. na feature/refatoração com git merge para develop, logo deve aparecer como se as mudanças tivessem sido feitas por uma pessoa só, 
+* ## mas foi resultado de toda a equipe.
+* ## 
+
