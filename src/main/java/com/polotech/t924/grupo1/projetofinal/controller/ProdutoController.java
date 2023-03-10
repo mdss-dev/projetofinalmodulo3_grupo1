@@ -1,89 +1,79 @@
 package com.polotech.t924.grupo1.projetofinal.controller;
 
+import com.polotech.t924.grupo1.projetofinal.dto.ProdutoRequest;
+import com.polotech.t924.grupo1.projetofinal.dto.ProdutoResponse;
 import com.polotech.t924.grupo1.projetofinal.model.Produto;
 import com.polotech.t924.grupo1.projetofinal.service.ProdutoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/produto")
+
 public class ProdutoController {
     private final ProdutoService produtoService;
 
-    // Acessa o formulario
-    @GetMapping("/form")
-    public String produtosForm(Produto produto){
-        return "addProdutoForm";
+    @PostMapping
+    public String novo(@RequestBody ProdutoRequest produtoRequest) {
+        Produto produto = new Produto();
+        BeanUtils.copyProperties(produtoRequest, produto);
+        produto = produtoService.create(produto);
+        return produto.getId();
+    }
+    private ProdutoResponse produtoToProdutoResponse(Produto produto){
+        ProdutoResponse produtoResponse = new ProdutoResponse();
+        BeanUtils.copyProperties(produto, produtoResponse);
+        return produtoResponse;
     }
 
-    // Adiciona novo produto
-    @PostMapping("/add")
-    public String novo(@Valid Produto produto, BindingResult result){
-        if (result.hasFieldErrors()) {
-            return "redirect:/form";
-        }
-        produtoService.create(produto);
-        return "redirect:/listar";
+    @GetMapping
+    public List<ProdutoResponse> readAll() {
+        return produtoService.buscarTodos().stream().map(this::produtoToProdutoResponse).collect(Collectors.toList());
     }
-    @GetMapping("/listar")
-    public String lista(Model model) {
-        List<Produto> produtos = produtoService.buscarTodos();
-        model.addAttribute("produtos", produtos);
-        return "todosprodutos";
-    }
-
-
-    // Acessa o formulario de edição
-    @GetMapping("form/{id}")
-    public String updateForm(Model model, @PathVariable(name = "id") int id) {
+    @GetMapping("{id}")
+    public ProdutoResponse buscarPorId(@PathVariable(name = "id") String id) {
         Produto produto = produtoService.buscarPorId(id);
-        model.addAttribute("produto", produto);
-        return "atualizaForm";
+        return produtoToProdutoResponse(produto);
+    }
+    @GetMapping("/cat/{categoria}")
+    public List <ProdutoResponse> buscarPorCategoria(@RequestParam (name = "categoria") String categoria) {
+        List <Produto> listaProdutos = produtoService.buscarPorCategoria(categoria);
+        return listaProdutos.stream().map(this::produtoToProdutoResponse).collect(Collectors.toList());
+    }
+    @GetMapping("/nome/{nome}")
+    public List <ProdutoResponse> buscarPorNome(@RequestParam String nome) {
+        List<Produto> listaProdutos = produtoService.buscarPorNome(nome);
+        return listaProdutos.stream().map(this::produtoToProdutoResponse).collect(Collectors.toList());
     }
 
-    // Busca por categoria
-
-    @GetMapping("/categoria")
-    public String categoria(@RequestParam String categoria, Model model){
-        model.addAttribute("produtos", produtoService.categoria(categoria));
-        return "categoria";
+    @PutMapping
+    public ProdutoResponse alterarProduto(@PathVariable(name = "id") String id, @RequestBody ProdutoRequest produtoRequest){
+        Produto produto= produtoService.buscarPorId(id);
+        produto.setNome(produtoRequest.getNome());
+        produto.setDescricao(produtoRequest.getDescricao());
+        produto.setPreco(produtoRequest.getPreco());
+        produto.setCategoria(produtoRequest.getCategoria());
+        produto = produtoService.update(produto);
+        ProdutoResponse produtoResponse = new ProdutoResponse();
+        BeanUtils.copyProperties(produto, produtoResponse);
+        return produtoResponse;
     }
 
-    @GetMapping("/buscarPorNome")
-    public ModelAndView buscarPorNome(String nome){ModelAndView mv = new ModelAndView("/buscarPorNome");
-        List<Produto> produtos = produtoService.buscarPorNome(nome);
-        if (produtos.isEmpty()) {
-            mv.addObject("mensagem", "Nenhum produto encontrado com o nome: ");
-        } else {
-            mv.addObject("produtos", produtos);
-        }
-        return mv;
-    }
-
-    @PostMapping("update/{id}")
-    public String alterarProduto(Produto produto, BindingResult result){
-        if (result.hasErrors()) {
-            return "redirect:/form";
-        }
-        produtoService.update(produto);
-        return "redirect:/listar";
-    }
-    @GetMapping("delete/{id}")
-    @CacheEvict(value = "produtos", allEntries = true)
-    public String delete(@PathVariable(name = "id") int id, Model model) {
+    @DeleteMapping
+    public void delete(@PathVariable("id") String id) {
         produtoService.delete(id);
-        return "redirect:/listar";
     }
+
 
 }
